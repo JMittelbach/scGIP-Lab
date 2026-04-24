@@ -1,0 +1,11 @@
+geneformer:
+  install_dir: "external/Geneformer"
+  model_dir: "external/Geneformer"
+  model_source: "ctheodoris/Geneformer"
+  use_local_model: true
+  embedding_layer: -2
+  max_cells_per_dataset: 10000
+  batch_size: 8
+  notes: >
+    Geneformer is an external dependency and is not tracked by this repository.
+    Install it with scripts/setup_geneformer.sh.

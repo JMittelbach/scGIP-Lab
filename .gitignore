@@ -1,4 +1,4 @@
-# Byte-compiled / optimized files
+# Python
 __pycache__/
 *.py[cod]
 *.so
@@ -22,14 +22,24 @@ dist/
 # Logs
 *.log
 
-# Data artifacts
-data/raw/*.h5ad
-data/processed/*.h5ad
-data/processed/**/*.npy
-data/processed/**/*.npz
-data/processed/**/*.csv
-data/processed/**/*.tsv
-!data/processed/.gitkeep
+# External dependencies
+external/Geneformer/
+
+# Data directories
+data/raw/
+data/processed/
+
+# Large single-cell and model artifacts
+*.h5ad
+*.h5
+*.loom
+*.npy
+*.npz
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.ckpt
 
 # Results artifacts
 experiments/**/results/figures/*

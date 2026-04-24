@@ -52,6 +52,26 @@ Geneformer (Theodoris et al., 2023) treats each cell transcriptome as an ordered
 
 This scaffold includes lightweight placeholders for Geneformer integration via Hugging Face artifacts. Depending on your workflow, you may need to install Geneformer separately from its source/Hugging Face resources in addition to the packages in `environment.yml`.
 
+## Geneformer installation strategy
+
+Geneformer is not included in this repository and is treated as an external dependency.
+
+- Geneformer is downloaded from Hugging Face with `git-lfs`.
+- Large model files must not be committed to this repository.
+- The expected local path is `external/Geneformer`.
+- Full Geneformer pretraining is not attempted in this project.
+- This repository uses pretrained Geneformer models for embedding extraction and lightweight downstream analyses.
+
+Install and verify Geneformer locally:
+
+```bash
+bash scripts/setup_geneformer.sh
+python scripts/check_geneformer.py
+```
+
+Note on download size:
+- Geneformer uses large `git-lfs` assets and should be treated as a multi-GB external dependency depending on selected revision/files.
+
 ## Limitations
 
 - No causal interpretation of embedding perturbations.

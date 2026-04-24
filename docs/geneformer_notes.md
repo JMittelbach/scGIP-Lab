@@ -30,3 +30,13 @@ PBMC data contain diverse but well-studied immune populations. This makes PBMC a
 ## Why full pretraining is not attempted here
 
 Full pretraining is computationally expensive and outside the scope of this repository scaffold. The objective here is to build a reproducible benchmark around pretrained embeddings and conservative evaluation design, not to reproduce the original large-scale training pipeline.
+
+## Why Geneformer is an external dependency
+
+Geneformer is handled as an external dependency instead of being vendored into this repository for several reasons:
+
+- Reproducibility: the project can pin and document the upstream Geneformer source/revision independently from local analysis code.
+- Repository size: large model files managed by `git-lfs` would make this project repository unnecessarily heavy.
+- Clear separation of concerns: original model code remains separate from project-specific benchmarking and analysis code.
+- Easier model updates: Geneformer can be updated locally without rewriting project history.
+- Reduced risk of mistakes: this setup helps avoid accidentally committing large model files or external repositories to GitHub.
