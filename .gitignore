@@ -29,6 +29,18 @@ external/Geneformer/
 data/raw/
 data/processed/
 
+# Data safety net (also covers future subfolders in data/)
+data/**/*.h5ad
+data/**/*.h5
+data/**/*.loom
+data/**/*.npy
+data/**/*.npz
+data/**/*.pt
+data/**/*.pth
+data/**/*.bin
+data/**/*.safetensors
+data/**/*.ckpt
+
 # Large single-cell and model artifacts
 *.h5ad
 *.h5
