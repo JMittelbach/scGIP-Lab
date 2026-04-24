@@ -1,10 +1,6 @@
 #!/usr/bin/env python
-"""Run script placeholder for Experiment 03."""
-
-
 def main() -> None:
-    print("Experiment 03: scVI/PCA comparison placeholder")
-    print("TODO: add comparable train/eval pipeline across Geneformer, PCA, and optional scVI.")
+    print("Experiment 03 runner not implemented yet.")
 
 
 if __name__ == "__main__":

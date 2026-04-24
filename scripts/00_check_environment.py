@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-"""Check local environment dependencies for this repository."""
-
 from __future__ import annotations
 
 import importlib
@@ -19,7 +17,7 @@ REQUIRED = [
 
 
 def main() -> None:
-    print("Checking required imports...")
+    print("Checking imports")
     for mod in REQUIRED:
         try:
             module = importlib.import_module(mod)
@@ -33,8 +31,7 @@ def main() -> None:
         version = getattr(geneformer, "__version__", "unknown")
         print(f"[OK] geneformer: {version}")
     except Exception:
-        print("[WARN] geneformer not installed. This is expected for scaffold stage.")
-        print("[WARN] Install/configure Geneformer later before embedding extraction.")
+        print("[WARN] geneformer: not installed")
 
 
 if __name__ == "__main__":

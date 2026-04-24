@@ -1,10 +1,6 @@
 #!/usr/bin/env python
-"""Run script placeholder for Experiment 02."""
-
-
 def main() -> None:
-    print("Experiment 02: Perturbation probe placeholder")
-    print("TODO: implement rank-shift/deletion transforms and embedding shift summaries.")
+    print("Experiment 02 runner not implemented yet.")
 
 
 if __name__ == "__main__":

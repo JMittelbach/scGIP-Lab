@@ -1,5 +1,3 @@
-"""Utilities for PBMC benchmarking with pretrained Geneformer embeddings."""
-
 __all__ = [
     "constants",
     "io",

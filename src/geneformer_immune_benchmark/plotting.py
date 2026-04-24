@@ -1,5 +1,3 @@
-"""Basic plotting utilities using matplotlib only."""
-
 from __future__ import annotations
 
 import numpy as np
@@ -8,7 +6,6 @@ import matplotlib.pyplot as plt
 
 
 def plot_label_counts(labels, title: str = "Label counts", ax=None):
-    """Bar plot of label counts."""
     if ax is None:
         _, ax = plt.subplots(figsize=(8, 4))
     series = pd.Series(labels).astype(str).value_counts()
@@ -21,7 +18,6 @@ def plot_label_counts(labels, title: str = "Label counts", ax=None):
 
 
 def plot_confusion_matrix(cm_df: pd.DataFrame, normalize: bool = False, ax=None):
-    """Heatmap-like confusion matrix using matplotlib imshow."""
     if ax is None:
         _, ax = plt.subplots(figsize=(6, 5))
     mat = cm_df.to_numpy(dtype=float)
@@ -41,7 +37,6 @@ def plot_confusion_matrix(cm_df: pd.DataFrame, normalize: bool = False, ax=None)
 
 
 def plot_score_histogram(scores, labels=None, bins: int = 30, ax=None):
-    """Histogram for confidence or rejection scores."""
     if ax is None:
         _, ax = plt.subplots(figsize=(6, 4))
     scores_arr = np.asarray(scores, dtype=float)
@@ -60,7 +55,6 @@ def plot_score_histogram(scores, labels=None, bins: int = 30, ax=None):
 
 
 def plot_rejection_curve(curve_df: pd.DataFrame, ax=None):
-    """Plot coverage vs accepted accuracy."""
     if ax is None:
         _, ax = plt.subplots(figsize=(6, 4))
     ax.plot(curve_df["coverage"], curve_df["accepted_accuracy"], marker="o")

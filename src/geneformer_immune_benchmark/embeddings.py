@@ -1,5 +1,3 @@
-"""Embedding utilities for lightweight downstream analyses."""
-
 from __future__ import annotations
 
 from pathlib import Path
@@ -14,7 +12,6 @@ from sklearn.preprocessing import StandardScaler
 
 
 def load_embedding_matrix(path: str | Path) -> np.ndarray:
-    """Load a `.npy` embedding matrix from disk."""
     p = Path(path)
     if not p.exists():
         raise FileNotFoundError(f"Embedding file not found: {p}")
@@ -27,11 +24,6 @@ def load_embedding_matrix(path: str | Path) -> np.ndarray:
 
 
 def align_embeddings_to_obs(adata: AnnData, embeddings: np.ndarray | pd.DataFrame) -> np.ndarray:
-    """Align embedding rows to adata.obs order.
-
-    If embeddings are a DataFrame with matching index, rows are reordered.
-    If embeddings are a NumPy array, row count must match adata.n_obs.
-    """
     if isinstance(embeddings, pd.DataFrame):
         missing = set(adata.obs_names) - set(embeddings.index)
         if missing:
@@ -46,7 +38,6 @@ def align_embeddings_to_obs(adata: AnnData, embeddings: np.ndarray | pd.DataFram
 
 
 def compute_umap_from_embeddings(adata: AnnData, embedding_key: str) -> AnnData:
-    """Compute neighborhood graph + UMAP from an embedding in adata.obsm."""
     if embedding_key not in adata.obsm:
         raise KeyError(f"Embedding key not found in adata.obsm: {embedding_key}")
     sc.pp.neighbors(adata, use_rep=embedding_key)
@@ -55,7 +46,6 @@ def compute_umap_from_embeddings(adata: AnnData, embedding_key: str) -> AnnData:
 
 
 def train_logistic_regression_classifier(X_train: np.ndarray, y_train: np.ndarray):
-    """Train a lightweight multinomial Logistic Regression classifier."""
     clf = make_pipeline(
         StandardScaler(with_mean=True),
         LogisticRegression(

@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-"""Draft a conservative label mapping TSV from detected label columns."""
-
 from __future__ import annotations
 
 import json
@@ -14,8 +12,8 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from geneformer_immune_benchmark.constants import MAPPING_TEMPLATE_COLUMNS  # noqa: E402
-from geneformer_immune_benchmark.io import ensure_dir  # noqa: E402
+from geneformer_immune_benchmark.constants import MAPPING_TEMPLATE_COLUMNS
+from geneformer_immune_benchmark.io import ensure_dir
 
 
 def main() -> None:
@@ -25,7 +23,6 @@ def main() -> None:
 
     if not summary_path.exists():
         print(f"Missing summary file: {summary_path}")
-        print("Run scripts/01_summarize_h5ad.py first.")
         return
 
     with summary_path.open("r", encoding="utf-8") as f:
@@ -50,16 +47,14 @@ def main() -> None:
                 )
 
     if not rows:
-        print("No candidate label values found in summaries.")
-        print("Check whether label columns exist in your AnnData files.")
+        print("No candidate label values found.")
         return
 
     draft = pd.DataFrame(rows).drop_duplicates(subset=["dataset", "raw_label"])
     draft = draft[MAPPING_TEMPLATE_COLUMNS]
     draft.to_csv(output_path, sep="\t", index=False)
 
-    print(f"Wrote draft mapping TSV: {output_path}")
-    print("Next: manually edit harmonized_l1/l2/l3, confidence, action, and notes.")
+    print(f"Saved: {output_path}")
 
 
 if __name__ == "__main__":

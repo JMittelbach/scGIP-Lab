@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-"""Diagnostic checks for local Geneformer installation."""
-
 from __future__ import annotations
 
 import importlib
@@ -82,14 +80,14 @@ def check_expected_files() -> bool:
 
 
 def main() -> int:
-    print("Geneformer diagnostic report")
-    print("-" * 32)
+    print("Geneformer diagnostics")
+    print("-" * 24)
 
     repo_ok = check_local_repo()
     import_ok = check_python_import()
     files_ok = check_expected_files() if repo_ok else False
 
-    print("-" * 32)
+    print("-" * 24)
     if repo_ok and import_ok and files_ok:
         print_status("OK", "Geneformer installation looks ready for scaffold workflows.")
         return 0
@@ -102,5 +100,5 @@ if __name__ == "__main__":
     try:
         raise SystemExit(main())
     except Exception as exc:
-        print_status("ERROR", f"Unexpected failure during diagnostics: {exc}")
+        print_status("ERROR", f"Unexpected failure: {exc}")
         raise SystemExit(1)

@@ -1,5 +1,3 @@
-"""Project-wide constants."""
-
 LABEL_COLUMN_KEYWORDS = [
     "label",
     "celltype",

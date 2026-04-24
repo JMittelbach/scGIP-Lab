@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-"""Summarize local h5ad files and detect likely metadata columns."""
-
 from __future__ import annotations
 
 import sys
@@ -11,7 +9,7 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from geneformer_immune_benchmark.io import (  # noqa: E402
+from geneformer_immune_benchmark.io import (
     detect_candidate_batch_columns,
     detect_candidate_label_columns,
     ensure_dir,
@@ -29,7 +27,6 @@ def main() -> None:
     files = sorted(raw_dir.glob("*.h5ad"))
     if not files:
         print(f"No .h5ad files found in {raw_dir}")
-        print("Place local AnnData files under data/raw and rerun.")
         write_json({}, out_path)
         return
 
@@ -56,7 +53,7 @@ def main() -> None:
                 print(f"  - {k}: {v}")
 
     write_json(all_summaries, out_path)
-    print(f"\nWrote summary JSON to: {out_path}")
+    print(f"\nSaved: {out_path}")
 
 
 if __name__ == "__main__":

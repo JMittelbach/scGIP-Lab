@@ -1,5 +1,3 @@
-"""Input/output helpers for local AnnData-based PBMC workflows."""
-
 from __future__ import annotations
 
 import json
@@ -12,14 +10,12 @@ from .constants import BATCH_COLUMN_KEYWORDS, LABEL_COLUMN_KEYWORDS
 
 
 def ensure_dir(path: str | Path) -> Path:
-    """Create a directory if needed and return its Path."""
     p = Path(path)
     p.mkdir(parents=True, exist_ok=True)
     return p
 
 
 def read_h5ad(path: str | Path) -> ad.AnnData:
-    """Read an h5ad file with basic path validation."""
     p = Path(path)
     if not p.exists():
         raise FileNotFoundError(f"h5ad file not found: {p}")
@@ -29,7 +25,6 @@ def read_h5ad(path: str | Path) -> ad.AnnData:
 
 
 def detect_candidate_label_columns(adata: ad.AnnData) -> list[str]:
-    """Heuristically detect likely label columns in adata.obs."""
     candidates: list[str] = []
     for col in adata.obs.columns:
         lowered = str(col).lower()
@@ -39,7 +34,6 @@ def detect_candidate_label_columns(adata: ad.AnnData) -> list[str]:
 
 
 def detect_candidate_batch_columns(adata: ad.AnnData) -> list[str]:
-    """Heuristically detect likely batch/donor/dataset columns in adata.obs."""
     candidates: list[str] = []
     for col in adata.obs.columns:
         lowered = str(col).lower()
@@ -49,7 +43,6 @@ def detect_candidate_batch_columns(adata: ad.AnnData) -> list[str]:
 
 
 def summarize_adata(adata: ad.AnnData) -> dict[str, Any]:
-    """Return a compact summary of matrix dimensions and selected obs metadata."""
     label_cols = detect_candidate_label_columns(adata)
     batch_cols = detect_candidate_batch_columns(adata)
 
@@ -69,7 +62,6 @@ def summarize_adata(adata: ad.AnnData) -> dict[str, Any]:
 
 
 def write_json(obj: Any, path: str | Path) -> None:
-    """Write JSON with stable formatting and parent directory creation."""
     p = Path(path)
     ensure_dir(p.parent)
     with p.open("w", encoding="utf-8") as f:

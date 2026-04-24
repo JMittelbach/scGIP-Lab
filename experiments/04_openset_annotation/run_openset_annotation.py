@@ -1,10 +1,6 @@
 #!/usr/bin/env python
-"""Run script placeholder for Experiment 04."""
-
-
 def main() -> None:
-    print("Experiment 04: Open-set annotation placeholder")
-    print("TODO: implement known/unknown split protocols and rejection metrics.")
+    print("Experiment 04 runner not implemented yet.")
 
 
 if __name__ == "__main__":

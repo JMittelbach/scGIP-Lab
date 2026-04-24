@@ -1,11 +1,3 @@
-"""Conservative label harmonization helpers.
-
-Expected AnnData obs columns:
-- A dataset/study column (for dataset-specific mapping rows).
-- A raw annotation column to preserve as immutable source labels.
-- Optional harmonized columns (added by this module).
-"""
-
 from __future__ import annotations
 
 import pandas as pd
@@ -15,7 +7,6 @@ from .constants import EXPECTED_HARMONIZED_COLUMNS, MAPPING_TEMPLATE_COLUMNS
 
 
 def load_label_mapping(path: str) -> pd.DataFrame:
-    """Load a TSV label mapping template and validate required columns."""
     mapping_df = pd.read_csv(path, sep="\t")
     missing = [c for c in MAPPING_TEMPLATE_COLUMNS if c not in mapping_df.columns]
     if missing:
@@ -29,17 +20,11 @@ def apply_label_mapping(
     dataset_col: str,
     raw_label_col: str,
 ) -> AnnData:
-    """Apply conservative mapping without touching raw labels.
-
-    The function appends harmonized columns and tracking flags, preserving the
-    original raw label column exactly as provided in adata.obs.
-    """
     if dataset_col not in adata.obs.columns:
         raise KeyError(f"dataset_col not found in adata.obs: {dataset_col}")
     if raw_label_col not in adata.obs.columns:
         raise KeyError(f"raw_label_col not found in adata.obs: {raw_label_col}")
 
-    # Keep a stable local copy of the source label columns.
     obs_df = adata.obs.copy()
     obs_df["_dataset_for_mapping"] = obs_df[dataset_col].astype(str)
     obs_df["_raw_label_for_mapping"] = obs_df[raw_label_col].astype(str)
@@ -64,7 +49,6 @@ def apply_label_mapping(
 
 
 def add_unmapped_label_flags(adata: AnnData) -> AnnData:
-    """Mark rows needing manual harmonization review."""
     if "harmonized_l1" not in adata.obs.columns:
         adata.obs["needs_label_review"] = True
         return adata
@@ -77,7 +61,6 @@ def add_unmapped_label_flags(adata: AnnData) -> AnnData:
 
 
 def summarize_label_mapping(adata: AnnData) -> pd.DataFrame:
-    """Summarize harmonization coverage by level."""
     rows = []
     n_total = float(adata.n_obs) if adata.n_obs else 1.0
     for col in EXPECTED_HARMONIZED_COLUMNS:
