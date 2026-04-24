@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "scGIP-Lab"
+version = "0.1.0"
+description = "Lightweight PBMC benchmarking scaffold using pretrained Geneformer embeddings"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+  {name = "Jannes Mittelbach"},
+]
+dependencies = [
+  "scanpy",
+  "anndata",
+  "pandas",
+  "numpy",
+  "scipy",
+  "scikit-learn",
+  "matplotlib",
+  "pyyaml",
+  "tqdm",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

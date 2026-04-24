@@ -1,0 +1,38 @@
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*.so
+
+# Environments
+.env
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS files
+.DS_Store
+
+# Build / packaging
+build/
+dist/
+*.egg-info/
+
+# Logs
+*.log
+
+# Data artifacts
+data/raw/*.h5ad
+data/processed/*.h5ad
+data/processed/**/*.npy
+data/processed/**/*.npz
+data/processed/**/*.csv
+data/processed/**/*.tsv
+!data/processed/.gitkeep
+
+# Results artifacts
+experiments/**/results/figures/*
+experiments/**/results/metrics/*
+!experiments/**/results/figures/.gitkeep
+!experiments/**/results/metrics/.gitkeep

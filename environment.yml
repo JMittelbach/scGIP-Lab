@@ -1,0 +1,22 @@
+name: scGIP-Lab
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.10
+  - scanpy
+  - anndata
+  - pandas
+  - numpy
+  - scipy
+  - scikit-learn
+  - matplotlib
+  - pyyaml
+  - tqdm
+  - jupyter
+  - ipykernel
+  - pip
+  - pip:
+      - transformers
+      - datasets
+      - torch
+      - accelerate

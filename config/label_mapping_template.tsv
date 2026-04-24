@@ -1,0 +1,10 @@
+dataset	raw_label	harmonized_l1	harmonized_l2	harmonized_l3	confidence	action	notes
+example_pbmc	CD4 T cell	T cell	CD4 T cell	Naive/Memory CD4 T	high	map	Canonical helper T-cell label.
+example_pbmc	CD8 T cell	T cell	CD8 T cell	Cytotoxic CD8 T	high	map	Canonical cytotoxic T-cell label.
+example_pbmc	B cell	B cell	B cell	Naive/Memory B	high	map	Canonical B-cell label.
+example_pbmc	NK cell	NK cell	NK cell	Conventional NK	high	map	Canonical NK label.
+example_pbmc	CD14 monocyte	Myeloid	Monocyte	CD14+ Monocyte	high	map	Classical monocyte.
+example_pbmc	FCGR3A monocyte	Myeloid	Monocyte	FCGR3A+ Monocyte	high	map	Non-classical monocyte.
+example_pbmc	dendritic cell	Myeloid	Dendritic cell	Conventional/plasmacytoid DC	medium	review	May include mixed DC populations.
+example_pbmc	platelet	Platelet	Platelet	Platelet	high	map	Low-RNA platelet-like profile.
+example_pbmc	unknown	Unknown	Unknown	Unknown	low	review	Retain as unresolved label.

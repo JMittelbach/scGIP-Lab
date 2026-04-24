@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this project, please cite both this repository and the Geneformer paper (Theodoris et al., Nature 2023)."
+title: "scGIP-Lab"
+type: software
+authors:
+  - family-names: Mittelbach
+    given-names: Jannes
+repository-code: "https://github.com/JMittelbach/scGIP-Lab"
+url: "https://github.com/JMittelbach/scGIP-Lab"
+license: MIT
+abstract: "Reproducible scaffold for evaluating pretrained Geneformer embeddings on PBMC scRNA-seq annotation and exploratory open-set recognition."
+keywords:
+  - single-cell RNA-seq
+  - PBMC
+  - Geneformer
+  - transfer learning
+  - open-set recognition
+  - bioinformatics

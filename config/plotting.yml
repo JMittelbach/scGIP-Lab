@@ -1,0 +1,10 @@
+style: default
+figure:
+  dpi: 150
+  figsize: [6, 4]
+colors:
+  known: "#1f77b4"
+  unknown: "#d62728"
+  baseline: "#7f7f7f"
+font:
+  size: 11

@@ -1,0 +1,7 @@
+raw_h5ad_dir: "data/raw"
+processed_dir: "data/processed"
+embeddings_dir: "data/processed/embeddings"
+figures_dir: "results/figures"
+metrics_dir: "results/metrics"
+geneformer_repo: "/path/to/local/Geneformer"
+geneformer_model: "ctheodoris/Geneformer"

@@ -1,0 +1,57 @@
+T cells:
+  - CD3D
+  - CD3E
+  - TRAC
+
+CD4 T cells:
+  - IL7R
+  - CCR7
+  - LTB
+
+CD8 T cells:
+  - CD8A
+  - CD8B
+  - GZMK
+
+Cytotoxic T/NK:
+  - NKG7
+  - GNLY
+  - PRF1
+  - GZMB
+
+NK cells:
+  - KLRD1
+  - FCGR3A
+  - NKG7
+
+B cells:
+  - MS4A1
+  - CD79A
+  - CD74
+
+Plasma cells:
+  - MZB1
+  - JCHAIN
+  - XBP1
+
+Monocytes:
+  - LST1
+  - S100A8
+  - S100A9
+  - FCN1
+
+Dendritic cells:
+  - FCER1A
+  - CLEC10A
+  - LILRA4
+
+Platelets:
+  - PPBP
+  - PF4
+  - NRGN
+
+Interferon response:
+  - ISG15
+  - IFIT1
+  - IFIT3
+  - MX1
