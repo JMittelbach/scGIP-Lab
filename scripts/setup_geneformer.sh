@@ -15,10 +15,28 @@ else
   exit 1
 fi
 
+MIN_DEPS=(
+  "transformers==4.46.*"
+  "datasets>=2.12"
+  "torch>=2.0.1"
+  "accelerate>=0.30"
+  "loompy>=3.0"
+  "seaborn>=0.12"
+  "optuna>=3.6"
+  "optuna-integration>=3.6"
+  "peft>=0.11.1"
+  "statsmodels>=0.14"
+  "tdigest>=0.5.2"
+  "tensorboard>=2.15"
+  "pyarrow>=12.0"
+  "pytz>=2023.0"
+)
+
 echo "[INFO] Preparing local Geneformer installation."
 echo "[INFO] Repository root: ${REPO_ROOT}"
 echo "[INFO] Target path: ${GENEFORMER_DIR}"
-echo "[INFO] This script installs Geneformer only. No datasets are downloaded."
+echo "[INFO] Python: $(${PYTHON_BIN} -c 'import sys; print(sys.executable)')"
+echo "[INFO] This script installs Geneformer code and runtime dependencies. No datasets are downloaded."
 
 echo "[INFO] Checking git-lfs availability..."
 if ! git lfs version >/dev/null 2>&1; then
@@ -46,8 +64,11 @@ else
   git clone "${GENEFORMER_URL}" "${GENEFORMER_DIR}"
 fi
 
-echo "[INFO] Installing Geneformer in editable mode..."
-"${PYTHON_BIN}" -m pip install -e "${GENEFORMER_DIR}"
+echo "[INFO] Installing/refreshing runtime dependencies..."
+"${PYTHON_BIN}" -m pip install "${MIN_DEPS[@]}"
+
+echo "[INFO] Installing Geneformer in editable mode (without auto-dependency resolution)..."
+"${PYTHON_BIN}" -m pip install -e "${GENEFORMER_DIR}" --no-deps
 
 echo "[OK] Geneformer setup completed."
 echo "[OK] Run 'python scripts/check_geneformer.py' to verify diagnostics."

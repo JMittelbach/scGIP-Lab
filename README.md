@@ -8,11 +8,6 @@ Compact, reproducible research scaffold for exploring pretrained Geneformer repr
 
 This repository studies whether pretrained Geneformer cell embeddings can support practical PBMC immune cell annotation and exploratory open-set recognition without heavy model retraining.
 
-The repository is intentionally lightweight:
-- It does not pretrain Geneformer.
-- It does not run heavy training by default.
-- It is designed for local `.h5ad` files that you place in `data/raw/`.
-
 ## Included experiments
 
 1. Geneformer PBMC embedding probe
@@ -20,7 +15,7 @@ The repository is intentionally lightweight:
 3. Geneformer vs PCA/scVI embedding comparison
 4. Open-set PBMC annotation using Geneformer embeddings
 
-Each experiment has its own folder under `experiments/` with a dedicated README, a run script, and result directories.
+Each experiment has its own directory under `experiments/`
 
 ## Label handling policy
 
@@ -31,13 +26,23 @@ Public PBMC datasets often use heterogeneous annotation schemes. This project us
 
 See `docs/label_harmonization_strategy.md` and `config/label_mapping_template.tsv`.
 
-## Recommended first run
+## Quick setup
 
 ```bash
-conda env create -f environment.yml
-conda activate scGIP-Lab
-python scripts/00_check_environment.py
-python scripts/01_summarize_h5ad.py
+bash scripts/setup_project.sh --full
+conda activate scgip-lab
+```
+
+For normal daily use, you usually only need:
+
+```bash
+conda activate scgip-lab
+```
+
+If you want a fast health check without forcing reinstall/update:
+
+```bash
+bash scripts/setup_project.sh
 ```
 
 ## Scientific motivation
@@ -65,12 +70,26 @@ Geneformer is not included in this repository and is treated as an external depe
 Install and verify Geneformer locally:
 
 ```bash
-bash scripts/setup_geneformer.sh
-python scripts/check_geneformer.py
+bash scripts/setup_project.sh
 ```
 
 Note on download size:
 - Geneformer uses large `git-lfs` assets and should be treated as a multi-GB external dependency depending on selected revision/files.
+
+## Tokenizing local h5ad files
+
+Geneformer already provides a tokenizer for `.h5ad` input. This repository exposes it via:
+
+```bash
+python scripts/03_extract_geneformer_embeddings.py --tokenize
+```
+
+Requirements for `.h5ad` input:
+- `obs["n_counts"]` must exist.
+- `var["ensembl_id"]` must exist, or run with `--use-h5ad-index` if `var.index` contains Ensembl IDs.
+
+Tokenized output is written to:
+- `data/processed/tokenized/*.dataset`
 
 ## Limitations
 
