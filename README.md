@@ -55,7 +55,7 @@ Geneformer (Theodoris et al., 2023) treats each cell transcriptome as an ordered
 
 ## Geneformer dependency note
 
-This scaffold includes lightweight placeholders for Geneformer integration via Hugging Face artifacts. Depending on your workflow, you may need to install Geneformer separately from its source/Hugging Face resources in addition to the packages in `environment.yml`.
+This scaffold includes local scripts for tokenization and embedding extraction, while the Geneformer code/model stay external via Hugging Face assets.
 
 ## Geneformer installation strategy
 
@@ -76,12 +76,13 @@ bash scripts/setup_project.sh
 Note on download size:
 - Geneformer uses large `git-lfs` assets and should be treated as a multi-GB external dependency depending on selected revision/files.
 
-## Tokenizing local h5ad files
+## Tokenizing and extracting embeddings
 
 Geneformer already provides a tokenizer for `.h5ad` input. This repository exposes it via:
 
 ```bash
-python scripts/03_extract_geneformer_embeddings.py --tokenize
+python scripts/03_extract_geneformer_embeddings.py --tokenize --input-file data/raw/YOUR_DATASET.h5ad --tokenized-prefix YOUR_DATASET
+python scripts/03_extract_geneformer_embeddings.py --extract-embeddings --input-file data/raw/YOUR_DATASET.h5ad --tokenized-prefix YOUR_DATASET --dataset-name YOUR_DATASET
 ```
 
 Requirements for `.h5ad` input:
@@ -90,6 +91,14 @@ Requirements for `.h5ad` input:
 
 Tokenized output is written to:
 - `data/processed/tokenized/*.dataset`
+
+Embedding outputs are written to:
+- `data/processed/embeddings/{dataset}_geneformer_v1_embeddings.npy`
+- `data/processed/embeddings/{dataset}_cell_ids.tsv`
+
+Notes:
+- Upstream `EmbExtractor` currently expects CUDA for extraction.
+- If `obs["cell_id"]` exists, it is propagated during tokenization for stable alignment.
 
 ## Limitations
 

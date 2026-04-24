@@ -3,6 +3,10 @@ geneformer:
   model_dir: "external/Geneformer"
   model_source: "ctheodoris/Geneformer"
   use_local_model: true
+  tokenized_dir: "data/processed/tokenized"
+  embeddings_dir: "data/processed/embeddings"
+  default_model_version: "V2"
+  output_tag: "geneformer_v1"
   embedding_layer: -2
   max_cells_per_dataset: 10000
   batch_size: 8

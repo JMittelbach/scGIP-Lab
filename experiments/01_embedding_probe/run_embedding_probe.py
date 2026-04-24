@@ -149,7 +149,10 @@ def load_and_prepare_dataset(
         raise FileNotFoundError(
             f"Missing Geneformer embeddings for dataset '{dataset_name}'. "
             f"Expected files: {emb_path}, {ids_path}. "
-            "Run the Geneformer embedding extraction step first."
+            "Run preprocessing first:\n"
+            "  1) bash scripts/setup_geneformer.sh\n"
+            "  2) python scripts/03_extract_geneformer_embeddings.py --tokenize\n"
+            "  3) generate embeddings and cell-id TSV into data/processed/embeddings/"
         )
 
     embeddings, cell_ids = load_embedding_files(emb_path, ids_path)

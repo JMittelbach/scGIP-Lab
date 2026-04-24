@@ -23,6 +23,9 @@ dist/
 *.log
 
 # External dependencies
+external/*
+!external/README.md
+!external/.gitkeep
 external/Geneformer/
 
 # Data directories
@@ -35,6 +38,9 @@ data/**/*.h5
 data/**/*.loom
 data/**/*.npy
 data/**/*.npz
+data/**/*.dataset
+data/**/*.arrow
+data/**/*.parquet
 data/**/*.pt
 data/**/*.pth
 data/**/*.bin
