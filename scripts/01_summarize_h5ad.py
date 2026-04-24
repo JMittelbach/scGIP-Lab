@@ -4,56 +4,78 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+import pandas as pd
+
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from geneformer_immune_benchmark.io import (
-    detect_candidate_batch_columns,
+from scgip_lab.io import (
     detect_candidate_label_columns,
-    ensure_dir,
+    find_h5ad_files,
     read_h5ad,
     summarize_adata,
     write_json,
+    write_tsv,
 )
 
 
 def main() -> None:
-    raw_dir = ROOT / "data" / "raw"
-    out_path = ROOT / "data" / "processed" / "h5ad_summaries.json"
-    ensure_dir(out_path.parent)
+    input_dir = ROOT / "data" / "raw"
+    out_json = ROOT / "data" / "processed" / "h5ad_summary.json"
+    out_tsv = ROOT / "data" / "processed" / "h5ad_summary.tsv"
 
-    files = sorted(raw_dir.glob("*.h5ad"))
+    files = find_h5ad_files(input_dir)
     if not files:
-        print(f"No .h5ad files found in {raw_dir}")
-        write_json({}, out_path)
+        print(f"No .h5ad files found in {input_dir}")
+        try:
+            write_json({}, out_json)
+            write_tsv(pd.DataFrame(), out_tsv)
+        except PermissionError as exc:
+            print(f"[WARN] Could not write summary outputs: {exc}")
         return
 
-    all_summaries = {}
-    for h5ad_file in files:
-        print(f"\n=== {h5ad_file.name} ===")
-        adata = read_h5ad(h5ad_file)
-        summary = summarize_adata(adata)
-        all_summaries[h5ad_file.name] = summary
+    summary_dict: dict[str, dict] = {}
+    tsv_rows: list[dict] = []
 
+    for path in files:
+        adata = read_h5ad(path)
+        summary = summarize_adata(adata, dataset_name=path.stem)
+        summary_dict[path.name] = summary
+
+        print(f"\n=== {path.name} ===")
         print(f"cells: {summary['n_cells']}")
         print(f"genes: {summary['n_genes']}")
         print(f"obs columns: {summary['obs_columns']}")
+        print(f"candidate label columns: {summary['candidate_label_columns']}")
+        print(f"candidate batch columns: {summary['candidate_batch_columns']}")
 
-        label_cols = detect_candidate_label_columns(adata)
-        batch_cols = detect_candidate_batch_columns(adata)
-        print(f"likely label columns: {label_cols}")
-        print(f"likely batch/donor/dataset columns: {batch_cols}")
+        for col in detect_candidate_label_columns(adata):
+            print(f"top 20 for '{col}':")
+            top_values = summary["label_top_values"].get(col, {})
+            for value, count in top_values.items():
+                print(f"  - {value}: {count}")
 
-        for col in label_cols:
-            top = adata.obs[col].astype(str).value_counts(dropna=False).head(20)
-            print(f"top values for '{col}' (up to 20):")
-            for k, v in top.items():
-                print(f"  - {k}: {v}")
+        tsv_rows.append(
+            {
+                "file_name": path.name,
+                "dataset_name": path.stem,
+                "n_cells": summary["n_cells"],
+                "n_genes": summary["n_genes"],
+                "candidate_label_columns": ";".join(summary["candidate_label_columns"]),
+                "candidate_batch_columns": ";".join(summary["candidate_batch_columns"]),
+            }
+        )
 
-    write_json(all_summaries, out_path)
-    print(f"\nSaved: {out_path}")
+    try:
+        write_json(summary_dict, out_json)
+        write_tsv(pd.DataFrame(tsv_rows), out_tsv)
+    except PermissionError as exc:
+        print(f"[ERROR] Could not write summary outputs: {exc}")
+        return
+    print(f"\nSaved: {out_json}")
+    print(f"Saved: {out_tsv}")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,39 @@
+experiment:
+  name: "01_embedding_probe"
+  random_seed: 42
+
+paths:
+  input_h5ad_dir: "data/raw"
+  embeddings_dir: "data/processed/embeddings"
+  output_dir: "experiments/01_embedding_probe/results"
+
+adata:
+  dataset_col: "dataset"
+  raw_label_col: null
+  broad_label_col: "pbmc_broad_label"
+
+embedding:
+  key: "X_geneformer"
+  file_pattern: "{dataset}_geneformer_v1_embeddings.npy"
+  cell_id_pattern: "{dataset}_cell_ids.tsv"
+
+filtering:
+  max_cells_per_dataset: 20000
+  min_cells_per_label: 30
+  exclude_broad_labels:
+    - "UNKNOWN"
+
+umap:
+  n_neighbors: 15
+  min_dist: 0.3
+  random_state: 42
+
+classifier:
+  test_size: 0.2
+  max_iter: 1000
+  class_weight: "balanced"
+
+plots:
+  max_points_umap: 50000
+  dpi: 200
+
