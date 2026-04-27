@@ -15,6 +15,10 @@ Usage: bash scripts/setup_project.sh [--quick|--full] [--no-checks]
   --quick     Fast path. Reuse existing env and skip reinstall steps when possible. (default)
   --full      Force full sync: env update, editable install, Geneformer setup.
   --no-checks Skip final diagnostics.
+
+Notes:
+  - The script checks for git-lfs before Geneformer setup.
+  - If missing, it attempts: conda install -n base -c conda-forge git-lfs -y
 EOF
 }
 
@@ -43,6 +47,11 @@ done
 
 if ! command -v conda >/dev/null 2>&1; then
   echo "[ERROR] conda not found in PATH."
+  exit 1
+fi
+
+if ! command -v git >/dev/null 2>&1; then
+  echo "[ERROR] git not found in PATH."
   exit 1
 fi
 
@@ -75,6 +84,33 @@ env_exists() {
 env_python_minor() {
   conda run -n "$1" python -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')" 2>/dev/null \
     | awk 'NF{last=$0} END{print last}'
+}
+
+ensure_git_lfs() {
+  if git lfs version >/dev/null 2>&1; then
+    echo "[INFO] git-lfs found."
+    return 0
+  fi
+
+  echo "[WARN] git-lfs is missing. Attempting installation via conda base..."
+  if conda install -n base -c conda-forge git-lfs -y; then
+    hash -r
+  else
+    echo "[ERROR] Automatic git-lfs install failed."
+    echo "[ERROR] Install git-lfs manually, then rerun setup:"
+    echo "[ERROR]   conda install -n base -c conda-forge git-lfs -y"
+    return 1
+  fi
+
+  if git lfs version >/dev/null 2>&1; then
+    echo "[OK] git-lfs installed successfully."
+    return 0
+  fi
+
+  echo "[ERROR] git-lfs still unavailable after installation attempt."
+  echo "[ERROR] Confirm PATH and run:"
+  echo "[ERROR]   git lfs install"
+  return 1
 }
 
 if env_exists "${ENV_NAME}"; then
@@ -119,6 +155,9 @@ if [[ -d "${REPO_ROOT}/external/Geneformer/.git" ]]; then
 fi
 
 if [[ "${MODE}" == "full" || "${ENV_CREATED}" -eq 1 || "${GENEFORMER_READY}" -ne 1 ]]; then
+  if ! ensure_git_lfs; then
+    exit 1
+  fi
   echo "[INFO] Running Geneformer setup..."
   conda run -n "${ENV_NAME}" bash "${REPO_ROOT}/scripts/setup_geneformer.sh"
 else
