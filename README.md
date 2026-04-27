@@ -45,6 +45,29 @@ If you want a fast health check without forcing reinstall/update:
 bash scripts/setup_project.sh
 ```
 
+## Experiment readiness check
+
+Use the Make target to see where you are in Experiment 01 (data, tokenization, embeddings, run outputs) and what to do next:
+
+```bash
+make check EXPERIMENT=1
+```
+
+With explicit dataset inputs:
+
+```bash
+make check EXPERIMENT=1 \
+  H5AD=/path/to/pbmc.h5ad \
+  DATASET=hao \
+  LABEL_COL=celltype.l2
+```
+
+Equivalent shortcut:
+
+```bash
+make check-experiment-1 H5AD=/path/to/pbmc.h5ad DATASET=hao LABEL_COL=celltype.l2
+```
+
 ## Scientific motivation
 
 Geneformer (Theodoris et al., 2023) treats each cell transcriptome as an ordered sequence of gene tokens, ranking genes by normalized expression relative to broad corpus-level frequencies. This offers a transfer-learning framework for extracting biologically structured embeddings from single-cell profiles. In PBMC settings, we use these embeddings as fixed features for lightweight downstream tasks:

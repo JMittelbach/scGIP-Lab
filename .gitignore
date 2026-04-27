@@ -60,7 +60,16 @@ data/**/*.ckpt
 *.ckpt
 
 # Results artifacts
-experiments/**/results/figures/*
-experiments/**/results/metrics/*
-!experiments/**/results/figures/.gitkeep
-!experiments/**/results/metrics/.gitkeep
+# Ignore all run outputs by default.
+experiments/**/results/**
+
+# Keep folder structure tracked.
+!experiments/**/results/
+!experiments/**/results/**/
+!experiments/**/results/**/.gitkeep
+
+# Allow only lightweight curated reports to be committed.
+!experiments/**/results/reports/
+!experiments/**/results/reports/*.md
+!experiments/**/results/reports/*.json
+!experiments/**/results/reports/*.tsv

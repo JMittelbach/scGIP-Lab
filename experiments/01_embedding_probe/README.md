@@ -38,3 +38,19 @@ python experiments/01_embedding_probe/run_embedding_probe.py --dry-run
 python experiments/01_embedding_probe/run_embedding_probe.py
 ```
 
+## One-command pipeline
+Run preprocessing and probe in one command:
+
+```bash
+python experiments/01_embedding_probe/experiment_1.py \
+  --prepare \
+  --h5ad /path/to/pbmc.h5ad \
+  --dataset-name hao \
+  --label-col celltype.l2
+```
+
+Useful variants:
+- Preprocess only (tokenize + embeddings): `python experiments/01_embedding_probe/experiment_1.py --prepare --preprocess-only --h5ad /path/to/pbmc.h5ad --dataset-name hao`
+- Probe only (when embeddings already exist): `python experiments/01_embedding_probe/experiment_1.py --h5ad /path/to/pbmc.h5ad --dataset-name hao --label-col celltype.l2`
+- Tokenize only: `python experiments/01_embedding_probe/experiment_1.py --tokenize --preprocess-only --h5ad /path/to/pbmc.h5ad --dataset-name hao`
+- Extract only (from existing tokenized dataset prefix): `python experiments/01_embedding_probe/experiment_1.py --extract-embeddings --preprocess-only --h5ad /path/to/pbmc.h5ad --dataset-name hao`

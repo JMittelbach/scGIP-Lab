@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 from importlib.util import find_spec
 from pathlib import Path
 from typing import Any
@@ -58,6 +59,21 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--input-dir", default="data/raw")
     parser.add_argument("--input-file", default=None)
     parser.add_argument("--input-identifier", default="")
+    parser.add_argument(
+        "--count-col",
+        default=None,
+        help="Column to use as source for obs['n_counts'] if n_counts is missing (default: auto-detect).",
+    )
+    parser.add_argument(
+        "--prepared-dir",
+        default="data/processed/prepared_h5ad",
+        help="Directory for auto-prepared h5ad files used for Geneformer tokenization.",
+    )
+    parser.add_argument(
+        "--disable-auto-prepare",
+        action="store_true",
+        help="Disable auto-preparation of h5ad (n_counts / ensembl_id fixes).",
+    )
     parser.add_argument("--tokenized-dir", default=None)
     parser.add_argument("--tokenized-prefix", default="pbmc_tokenized")
     parser.add_argument("--nproc", type=int, default=4)
@@ -125,6 +141,90 @@ def check_h5ad_schema(path: Path, use_h5ad_index: bool) -> tuple[bool, str]:
         )
 
     return True, "ok"
+
+
+def is_ensembl_like(values: list[str], min_fraction: float = 0.9) -> bool:
+    if not values:
+        return False
+    pattern = re.compile(r"^ENSG\d+")
+    hits = sum(1 for v in values if pattern.match(v))
+    return (hits / len(values)) >= min_fraction
+
+
+def detect_count_source_column(obs_cols: list[str], preferred: str | None) -> str | None:
+    if "n_counts" in obs_cols:
+        return "n_counts"
+    if preferred is not None and preferred in obs_cols:
+        return preferred
+
+    common = [
+        "nCount_RNA",
+        "total_counts",
+        "nCount_SCT",
+        "nCount",
+        "umi_count",
+        "umis",
+    ]
+    for c in common:
+        if c in obs_cols:
+            return c
+
+    lowered = {c.lower(): c for c in obs_cols}
+    for key in lowered:
+        if "ncount" in key or "total_count" in key or ("umi" in key and "count" in key):
+            return lowered[key]
+    return None
+
+
+def validate_prepared_h5ad(path: Path, use_h5ad_index: bool) -> bool:
+    ok, _ = check_h5ad_schema(path, use_h5ad_index=use_h5ad_index)
+    return ok
+
+
+def prepare_single_h5ad_for_tokenizer(
+    source_path: Path,
+    prepared_dir: Path,
+    use_h5ad_index: bool,
+    preferred_count_col: str | None,
+) -> Path:
+    prepared_path = prepared_dir / source_path.name
+    if prepared_path.exists() and prepared_path.stat().st_mtime >= source_path.stat().st_mtime:
+        if validate_prepared_h5ad(prepared_path, use_h5ad_index):
+            print_status("INFO", f"Reusing prepared h5ad: {prepared_path}")
+            return prepared_path
+
+    adata = ad.read_h5ad(source_path)
+    changed = False
+
+    obs_cols = [str(c) for c in adata.obs.columns]
+    count_source = detect_count_source_column(obs_cols, preferred_count_col)
+    if "n_counts" not in adata.obs.columns:
+        if count_source is None:
+            raise ValueError(
+                f"{source_path.name}: missing obs['n_counts'] and no alternative count column detected."
+            )
+        adata.obs["n_counts"] = adata.obs[count_source].astype(float)
+        changed = True
+        print_status("INFO", f"{source_path.name}: added obs['n_counts'] from obs['{count_source}'].")
+
+    if "ensembl_id" not in adata.var.columns:
+        var_names = [str(v) for v in adata.var_names.tolist()]
+        if use_h5ad_index or is_ensembl_like(var_names):
+            adata.var["ensembl_id"] = var_names
+            changed = True
+            print_status("INFO", f"{source_path.name}: added var['ensembl_id'] from var_names.")
+        else:
+            raise ValueError(
+                f"{source_path.name}: missing var['ensembl_id'] and var_names do not look like Ensembl IDs."
+            )
+
+    if changed:
+        ensure_dir(prepared_dir)
+        adata.write_h5ad(prepared_path)
+        print_status("OK", f"Prepared h5ad written: {prepared_path}")
+        return prepared_path
+
+    return source_path
 
 
 def has_obs_column(path: Path, column: str) -> bool:
@@ -225,12 +325,23 @@ def run_tokenization(
     except Exception as exc:
         raise RuntimeError(f"Could not import TranscriptomeTokenizer: {exc}") from exc
 
+    prepared_dir = resolve_repo_path(args.prepared_dir)
+
     if args.input_file:
         input_file = resolve_repo_path(args.input_file)
         if not input_file.exists():
             raise FileNotFoundError(f"Input file not found: {input_file}")
-        input_dir = input_file.parent
-        input_identifier = args.input_identifier if args.input_identifier else input_file.stem
+        if args.disable_auto_prepare:
+            working_file = input_file
+        else:
+            working_file = prepare_single_h5ad_for_tokenizer(
+                source_path=input_file,
+                prepared_dir=prepared_dir,
+                use_h5ad_index=args.use_h5ad_index,
+                preferred_count_col=args.count_col,
+            )
+        input_dir = working_file.parent
+        input_identifier = args.input_identifier if args.input_identifier else working_file.stem
     else:
         input_dir = resolve_repo_path(args.input_dir)
         input_identifier = args.input_identifier
